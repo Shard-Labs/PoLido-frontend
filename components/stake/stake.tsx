@@ -12,6 +12,7 @@ import { formatBalance } from 'utils';
 import { SCANNERS } from 'config';
 import InputRightDecorator from 'components/inputRightDecorator/InputRightDecorator';
 import getConfig from 'next/config';
+import { getMaticAddress } from 'config';
 
 const InputWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spaceMap.md}px;
@@ -55,6 +56,9 @@ const Stake: FC = () => {
   const [totalPooledMatic, setTotalPooledMatic] = useState<number>(0);
   const [currentStakeCapacityPercentage, setCurrentStakeCapacityPercentage] =
     useState<number>(0);
+  const [maticPrice, setMaticPrice] = useState<number>(0);
+  const { ethplorerMainnetUrl, defaultChain } = publicRuntimeConfig;
+  const maticAddress = getMaticAddress(+defaultChain);
   const hardCapLimit = useRef(+publicRuntimeConfig.hardCapLimit);
 
   const checkAllowance = (amount: string) => {
@@ -328,12 +332,21 @@ const Stake: FC = () => {
   };
 
   useEffect(() => {
+    fetch(
+      `${ethplorerMainnetUrl}getTokenInfo/${maticAddress}?apiKey=${process.env.ETHPLORER_MAINNET_API_KEY}`,
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setMaticPrice(data.price);
+      });
+  }, []);
+
+  useEffect(() => {
     if (lidoMaticWeb3) {
       const amount = utils.parseUnits('1', 'ether');
       lidoMaticWeb3.convertMaticToStMatic(amount).then(([res]) => {
         setRate(formatBalance(res));
       });
-
       if (hardCapLimit.current) {
         lidoMaticWeb3.getTotalPooledMatic().then((res) => {
           if (+hardCapLimit.current <= Number(utils.formatEther(res))) {
@@ -375,7 +388,7 @@ const Stake: FC = () => {
             rightDecorator={
               <InputRightDecorator
                 hardCapLimit={hardCapLimit.current || 0}
-                currentlyStakedAmount={totalPooledMatic}
+                currentlyStakedAmount={totalPooledMatic * maticPrice}
                 currentStakeCapacityPercentage={currentStakeCapacityPercentage}
                 onClick={setMaxInputValue}
                 disabled={!account}
