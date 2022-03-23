@@ -22,13 +22,15 @@ export const ClaimStatBalanceStyle = styled.div`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   line-height: 1.6em;
   width: 50%;
-
   :last-child {
     margin-right: 0;
   }
+  
 `;
 
-export const ClaimCardTitleStyle = styled.div``;
+export const ClaimCardTitleStyle = styled.div`
+  color: #7a8aa0;
+`;
 
 export const ClaimStatValueStyle = styled.div<{
   $small: boolean;
