@@ -52,6 +52,7 @@ export default async function handler(
     price: rate,
     apr: 8.676,
     stakers: holdersCount,
+    stMaticMarketCap: totalStMaticSupply,
     totalStaked: {
       token: formattedPooledMatic,
       usd: formattedPooledMatic * rate,

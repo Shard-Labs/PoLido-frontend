@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { Block, Link, DataTable, DataTableRow } from '@lidofinance/lido-ui';
 import Tabs from 'components/tabs';
@@ -26,12 +26,25 @@ const Home: FC<HomeProps> = ({ faqList }) => {
   const [selectedTab, setSelectedTab] = useState('STAKE');
   const [symbol, setSymbol] = useState('MATIC');
 
+  const [stakers, setStakers] = useState();
+  const [totalstMatic, setTotalstMatic] = useState();
+
   maticTokenWeb3?.symbol().then(setSymbol);
 
   const totalTokenStaked = useContractSWR({
     contract: lidoMaticRPC,
     method: 'getTotalPooledMatic',
   });
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setStakers(data.stakers);
+        setTotalstMatic(data.stMaticMarketCap);
+      });
+  }, []);
 
   return (
     <Layout
@@ -71,18 +84,20 @@ const Home: FC<HomeProps> = ({ faqList }) => {
             >
               {formatBalance(totalTokenStaked.data)} {symbol}
             </DataTableRow>
-            {/* 
-             TODO: uncomment after getting api key for etherscan
-            <DataTableRow title="Stakers" loading={tokenName.initialLoading}>
-              99 999
-            </DataTableRow>
-             */}
-            {/* <DataTableRow
-              title="stMATIC market cap"
-              loading={tokenName.initialLoading}
+
+            <DataTableRow
+              title="Stakers"
+              // loading={tokenName.initialLoading}
             >
-              $9,999,999,999
-            </DataTableRow> */}
+              { stakers ? stakers : "Loading" }
+            </DataTableRow>
+
+            <DataTableRow
+              title="stMATIC market cap"
+              // loading={tokenName.initialLoading}
+            >
+              { totalstMatic ? `$ ${totalstMatic}` : "Loading"}
+            </DataTableRow>
           </DataTable>
         </Block>
       </Section>
