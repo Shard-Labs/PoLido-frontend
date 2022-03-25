@@ -17,6 +17,8 @@ import {
   useMaticTokenWeb3,
 } from 'hooks';
 import { useState, useEffect } from 'react';
+
+//? temporary import
 import { BigNumber } from 'ethers';
 
 const Wallet: WalletComponent = (props) => {
@@ -31,6 +33,7 @@ const Wallet: WalletComponent = (props) => {
     method: 'balanceOf',
     params: [account],
   });
+  const [apr, setApr] = useState();
   const [maticSymbol, setMaticSymbol] = useState('MATIC');
   const [stMaticSymbol, setStMaticSymbol] = useState('stMATIC');
   useEffect(() => {
@@ -45,6 +48,15 @@ const Wallet: WalletComponent = (props) => {
       });
     }
   }, [maticTokenWeb3, stMaticTokenWeb3]);
+
+  useEffect(() => {
+    fetch('api/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        setApr(data.apr);
+      });
+  }, []);
+
   const stMaticBalance = useContractSWR({
     contract: stMaticTokenRPC,
     method: 'balanceOf',
@@ -79,25 +91,22 @@ const Wallet: WalletComponent = (props) => {
           extra={
             <>
               <FormatToken
-                // TODO : replace hardcoded amount value
-                amount={BigNumber.from(20)}
-                symbol={"Matic"}
+                amount={BigNumber.from(20)} // TODO : replace hardcoded amount value
+                symbol={maticSymbol}
                 approx
               />
             </>
           }
         />
 
-        {/* TODO: Add after historical data can be fetched */}
         <WalletCardBalance
           small
           title="Lido APR"
           loading={maticBalance.initialLoading}
           value={
             <>
-              {/* // TODO : replace hardcoded percentage value */}
               <Text style={{ color: '#53BA95' }} size="xs">
-                40.5%
+                {apr === undefined ? 'Loading' : apr + '%'}
               </Text>
             </>
           }
