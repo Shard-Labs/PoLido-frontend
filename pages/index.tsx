@@ -15,19 +15,20 @@ import Claim from 'components/claim';
 import { formatBalance } from 'utils';
 import { SCANNERS, LIDO_MATIC_BY_NETWORK } from 'config';
 
+import { getHoldersCount, getTotalStMaticSupply } from "../utilsAPI";
+
 interface HomeProps {
   faqList: FAQItem[];
+  totalStMaticSupply?: number;
+  stakers?: number;
 }
 
-const Home: FC<HomeProps> = ({ faqList }) => {
+const Home: FC<HomeProps> = ({ faqList, totalStMaticSupply, stakers }) => {
   const { chainId } = useSDK();
   const maticTokenWeb3 = useMaticTokenWeb3();
   const lidoMaticRPC = useLidoMaticRPC();
   const [selectedTab, setSelectedTab] = useState('STAKE');
   const [symbol, setSymbol] = useState('MATIC');
-
-  const [stakers, setStakers] = useState();
-  const [totalstMatic, setTotalstMatic] = useState();
 
   maticTokenWeb3?.symbol().then(setSymbol);
 
@@ -35,16 +36,6 @@ const Home: FC<HomeProps> = ({ faqList }) => {
     contract: lidoMaticRPC,
     method: 'getTotalPooledMatic',
   });
-
-  useEffect(() => {
-    fetch('/api/stats')
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setStakers(data.stakers);
-        setTotalstMatic(data.stMaticMarketCap);
-      });
-  }, []);
 
   return (
     <Layout
@@ -96,7 +87,7 @@ const Home: FC<HomeProps> = ({ faqList }) => {
               title="stMATIC market cap"
               // loading={tokenName.initialLoading}
             >
-              { totalstMatic ? `$ ${totalstMatic}` : "Loading"}
+              { totalStMaticSupply ? `$ ${totalStMaticSupply}` : "Loading"}
             </DataTableRow>
           </DataTable>
         </Block>
@@ -109,6 +100,11 @@ const Home: FC<HomeProps> = ({ faqList }) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+
+  // stats values
+  const totalStMaticSupply = await getTotalStMaticSupply();
+  // const stakers = await getHoldersCount();
+
   // list of .md files from /faq/
   const fileList = [
     'lido-polygon',
@@ -121,5 +117,5 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   ];
   const faqList = await getFaqList(fileList);
 
-  return { props: { faqList } };
+  return { props: { faqList, totalStMaticSupply } };
 };
