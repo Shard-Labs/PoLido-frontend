@@ -39,7 +39,7 @@ const Home: FC<HomeProps> = ({ faqList, totalStMaticSupply, stakers }) => {
 
   return (
     <Layout
-      title="Lido for Polygon"
+      title="Lido on Polygon"
       subtitle="Stake Matic and receive stMatic while staking."
     >
       <Tabs
