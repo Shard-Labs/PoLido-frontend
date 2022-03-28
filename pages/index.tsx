@@ -103,7 +103,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 
   // stats values
   const totalStMaticSupply = await getTotalStMaticSupply();
-  // const stakers = await getHoldersCount();
+  const stakers = await getHoldersCount();
 
   // list of .md files from /faq/
   const fileList = [
@@ -117,5 +117,5 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   ];
   const faqList = await getFaqList(fileList);
 
-  return { props: { faqList, totalStMaticSupply } };
+  return { props: { faqList, totalStMaticSupply, stakers } };
 };

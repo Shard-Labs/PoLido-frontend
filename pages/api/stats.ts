@@ -28,15 +28,11 @@ export default async function handler(
 
   const contract = new Contract(lidoMaticAddress, ILidoMatic.abi, provider);
 
-  //? temporary default value is used to avoid errors
-  // TODO : handle errors
-  const {
-    price: { rate } = { rate: 1 },
-  } = await fetch(
+  const { price: { rate } = { rate: 1.6 } } = await fetch(
     `${ethplorerMainnetUrl}getTokenInfo/${maticAddress}?apiKey=${process.env.ETHPLORER_MAINNET_API_KEY}`,
   ).then((res) => res.json());
 
-  const { holdersCount } = await fetch(
+  const { holdersCount = 100 } = await fetch(
     `${ethplorerMainnetUrl}getTokenInfo/${lidoMaticAddress}?apiKey=${process.env.ETHPLORER_MAINNET_API_KEY}`,
   ).then((res) => res.json());
 

@@ -21,7 +21,7 @@ export const getApr = async (): Promise<number> => {
 }
 
 export const getRate = async () => {
-  const { price: { rate } = { rate: 1 } } = await fetch(
+  const { price: { rate } = { rate: 1.6 } } = await fetch(
     `${ethplorerMainnetUrl}getTokenInfo/${maticAddress}?apiKey=${process.env.ETHPLORER_MAINNET_API_KEY}`,
   ).then((res) => res.json());
 
@@ -29,7 +29,7 @@ export const getRate = async () => {
 };
 
 export const getHoldersCount = async () => {
-  const { holdersCount } = await fetch(
+  const { holdersCount = 100 } = await fetch(
     `${ethplorerMainnetUrl}getTokenInfo/${lidoMaticAddress}?apiKey=${process.env.ETHPLORER_MAINNET_API_KEY}`,
   ).then((res) => res.json());
 
