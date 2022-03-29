@@ -42,7 +42,7 @@ const SubmitOrConnect: FC<Props> = ({
               onClick={unlock}
               disabled={disabledUnlock || isUnlocking}
               loading={isUnlocking}
-              style={{ marginRight: '15px', flexGrow: 1 }}
+              style={{ marginRight: '15px', flexGrow: 1, paddingLeft: '0', paddingRight: '0' }}
             >
               {unlockLabel}
             </Button>
@@ -52,7 +52,7 @@ const SubmitOrConnect: FC<Props> = ({
             disabled={isSubmitting || disabledSubmit}
             loading={isSubmitting}
             onClick={submit}
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 1, paddingLeft: '0', paddingRight: '0' }}
           >
             {submitLabel}
           </Button>
