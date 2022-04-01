@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import styled from 'styled-components';
 
-import { FC, useRef, useState } from 'react';
+import { FC, useRef, useState, useEffect } from 'react';
 import { Button, Popover } from '@lidofinance/lido-ui';
 
 import batteryLow from 'public/icons/low-battery.svg';
@@ -60,16 +60,24 @@ const InputRightDecorator: FC<InputRightDecoratorProps> = ({
   const handleToggle = () => {
     setIsPopoverOpen((state) => !state);
   };
+  const [price, setPrice] = useState(1.6);
+
+  useEffect(() => {
+    fetch('api/stats').then((res) =>
+      res.json().then((res) => setPrice(res.price)),
+    );
+  }, []);
+
   return (
     <Wrapper>
       {hardCapLimit ? (
         <>
           <img
             src={
-              currentStakeCapacityPercentage >= 100
+              currentStakeCapacityPercentage * price >= 100
                 ? batteryFull
-                : currentStakeCapacityPercentage < 100 &&
-                  currentStakeCapacityPercentage >= 50
+                : currentStakeCapacityPercentage * price < 100 &&
+                  currentStakeCapacityPercentage * price >= 50
                 ? batteryHalf
                 : batteryLow
             }
@@ -114,12 +122,12 @@ const InputRightDecorator: FC<InputRightDecoratorProps> = ({
               <TotalStake>
                 <span>Total stake capacity: </span>
                 <span>{`$${formatCash(
-                  +currentlyStakedAmount * 1.6,
-                )} / $${formatCash(
-                  10000000,
-                )} (${currentStakeCapacityPercentage.toFixed(2)}%)`}</span>
+                  +currentlyStakedAmount * price,
+                )} / $${formatCash(hardCapLimit)} (${(
+                  currentStakeCapacityPercentage * price
+                ).toFixed(2)}%)`}</span>
               </TotalStake>
-              <ProgressBar completed={currentStakeCapacityPercentage} />
+              <ProgressBar completed={currentStakeCapacityPercentage * price} />
             </PopoverContent>
           </Popover>
         </>
