@@ -204,13 +204,13 @@ const Unstake: FC<{ changeTab: (tab: string) => void }> = ({ changeTab }) => {
   };
 
   useEffect(() => {
-    if (lidoMaticWeb3) {
+    if (stMaticTokenRPC) {
       const amount = utils.parseUnits('1', 'ether');
-      lidoMaticWeb3.convertMaticToStMatic(amount).then(([res]) => {
+      stMaticTokenRPC.convertStMaticToMatic(amount).then(([res]) => {
         setRate(formatBalance(res));
       });
     }
-  }, [lidoMaticWeb3]);
+  }, [stMaticTokenRPC]);
   useEffect(() => {
     if (lidoMaticWeb3) {
       lidoMaticWeb3?.symbol().then((res) => {
@@ -338,8 +338,8 @@ const Unstake: FC<{ changeTab: (tab: string) => void }> = ({ changeTab }) => {
       setReward('0');
       setCanApprove(false);
       setCanUnstake(false);
-    } else if (lidoMaticWeb3 && +amount > 0) {
-      lidoMaticWeb3
+    } else if (stMaticTokenRPC && +amount > 0) {
+      stMaticTokenRPC
         .convertStMaticToMatic(utils.parseUnits(amount, 'ether'))
         .then(([res]) => {
           setReward(formatBalance(res));
@@ -410,7 +410,7 @@ const Unstake: FC<{ changeTab: (tab: string) => void }> = ({ changeTab }) => {
         />
       </form>
       <DataTable>
-        <DataTableRow title="You will recieve">
+        <DataTableRow title="You will receive">
           {reward} {symbol}
         </DataTableRow>
         <DataTableRow title="Exchange rate">

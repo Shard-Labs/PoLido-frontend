@@ -328,14 +328,14 @@ const Stake: FC = () => {
   };
 
   useEffect(() => {
-    if (lidoMaticWeb3) {
+    if (lidoMaticRpc) {
       const amount = utils.parseUnits('1', 'ether');
-      lidoMaticWeb3.convertMaticToStMatic(amount).then(([res]) => {
+      lidoMaticRpc.convertMaticToStMatic(amount).then(([res]) => {
         setRate(formatBalance(res));
       });
 
       if (hardCapLimit.current) {
-        lidoMaticWeb3.getTotalPooledMatic().then((res) => {
+        lidoMaticRpc.getTotalPooledMatic().then((res) => {
           if (+hardCapLimit.current <= Number(utils.formatEther(res))) {
             setCanUnlock(false);
             setCanStake(false);
@@ -347,7 +347,7 @@ const Stake: FC = () => {
         });
       }
     }
-  }, [enteredAmount, lidoMaticWeb3, totalPooledMatic]);
+  }, [enteredAmount, lidoMaticRpc, totalPooledMatic]);
 
   useEffect(() => {
     if (lidoMaticWeb3) {
@@ -399,7 +399,7 @@ const Stake: FC = () => {
         />
       </form>
       <DataTable>
-        <DataTableRow title="You will recieve">
+        <DataTableRow title="You will receive">
           {reward} {stSymbol}
         </DataTableRow>
         <DataTableRow title="Exchange rate">
